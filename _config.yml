@@ -1,0 +1,34 @@
+theme: minima
+title: NFD Parser 文档
+description: 网盘分享链接云解析服务参考文档
+
+# GitHub Pages 配置
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# 导航菜单
+header_pages:
+  - api.md
+  - examples.md
+  - deployment.md
+  - configuration.md
+
+# 社交链接
+github_username: nfd-parser
+twitter_username: 
+
+# 其他设置
+markdown: kramdown
+highlighter: rouge
+
+# 版权信息
+copyright: "基于 netdisk-fast-download 项目的参考文档"
+
+# SEO
+lang: zh-CN
+author: NFD Parser Team
+
+# Google Analytics (可选)
+# google_analytics: UA-XXXXXXXX-X
