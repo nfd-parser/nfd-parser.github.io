@@ -13,9 +13,9 @@
 
 推荐使用阿里 Dragonwell JDK 17:
 
-- [Windows x86](https://lz.qaiu.top/ec/e957acef36ce89e1053979672a90d219n)
-- [Linux x86](https://lz.qaiu.top/ec/6ebc9f2e0bbd53b4c4d5b11013f40a80NHvcYU)
-- [Linux aarch64](https://lz.qaiu.top/ec/d14c2d06296f61b52a876b525265e0f8tzxTc5)
+- [Windows x86](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
+- [Linux x86](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
+- [Linux aarch64](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
 
 ## 构建项目
 

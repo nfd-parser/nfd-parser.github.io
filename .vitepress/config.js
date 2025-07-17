@@ -11,14 +11,14 @@ export default defineConfig({
     ['meta', { name: 'author', content: 'NFD Parser Team' }],
     ['meta', { property: 'og:title', content: 'NFD Parser 文档' }],
     ['meta', { property: 'og:description', content: '网盘分享链接云解析服务参考文档' }],
-    ['link', { rel: 'icon', href: 'https://lz.qaiu.top/img/lanzou111.403f7881.png' }]
+    ['link', { rel: 'icon', href: '/logo.svg' }]
   ],
 
   // 主题配置
   themeConfig: {
     // 网站标题和logo
     siteTitle: 'NFD Parser',
-    logo: 'https://lz.qaiu.top/img/lanzou111.403f7881.png',
+    logo: '/logo.svg',
     
     // 导航栏
     nav: [
