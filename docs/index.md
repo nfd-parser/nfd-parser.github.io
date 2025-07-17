@@ -6,12 +6,12 @@ hero:
   text: "网盘分享链接云解析服务"
   tagline: 将网盘分享下载链接转化为直链的云解析服务
   image:
-    src: /logo.svg
+    src: https://lz.qaiu.top/img/lanzou111.403f7881.png
     alt: NFD Parser
   actions:
     - theme: brand
-      text: 开始使用
-      link: /api
+      text: 快速开始
+      link: /guide/getting-started
     - theme: alt
       text: 查看示例
       link: /examples
