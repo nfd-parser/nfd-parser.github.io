@@ -54,6 +54,14 @@
           https://www.ilanzou.com/s/Wch0DGj8
         </button>
       </div>
+
+      <!-- 显示用户输入的链接 -->
+      <div v-if="shareUrl.trim() && shareUrl !== 'https://www.ilanzou.com/s/Wch0DGj8'" class="input-preview">
+        <span class="preview-label">当前输入：</span>
+        <a :href="shareUrl" target="_blank" class="input-link" rel="noopener noreferrer">
+          {{ shareUrl }}
+        </a>
+      </div>
     </div>
 
     <!-- 错误信息 -->
@@ -79,10 +87,34 @@
           </div>
         </div>
 
+        <div v-if="result.shareLinkInfo?.shareUrl" class="result-item">
+          <label>原始链接：</label>
+          <div class="link-item">
+            <a :href="result.shareLinkInfo.shareUrl" target="_blank" class="result-link" rel="noopener noreferrer">
+              {{ result.shareLinkInfo.shareUrl }}
+            </a>
+            <button @click="copyToClipboard(result.shareLinkInfo.shareUrl)" class="copy-btn">
+              📋 复制
+            </button>
+          </div>
+        </div>
+
+        <div v-if="result.shareLinkInfo?.standardUrl && result.shareLinkInfo.standardUrl !== result.shareLinkInfo.shareUrl" class="result-item">
+          <label>标准链接：</label>
+          <div class="link-item">
+            <a :href="result.shareLinkInfo.standardUrl" target="_blank" class="result-link" rel="noopener noreferrer">
+              {{ result.shareLinkInfo.standardUrl }}
+            </a>
+            <button @click="copyToClipboard(result.shareLinkInfo.standardUrl)" class="copy-btn">
+              📋 复制
+            </button>
+          </div>
+        </div>
+
         <div v-if="result.downLink" class="result-item">
           <label>下载链接：</label>
           <div class="link-item">
-            <a :href="result.downLink" target="_blank" class="result-link">
+            <a :href="result.downLink" target="_blank" class="result-link" rel="noopener noreferrer">
               {{ result.downLink }}
             </a>
             <button @click="copyToClipboard(result.downLink)" class="copy-btn">
@@ -94,7 +126,7 @@
         <div v-if="result.apiLink" class="result-item">
           <label>API 链接：</label>
           <div class="link-item">
-            <a :href="result.apiLink" target="_blank" class="result-link">
+            <a :href="result.apiLink" target="_blank" class="result-link" rel="noopener noreferrer">
               {{ result.apiLink }}
             </a>
             <button @click="copyToClipboard(result.apiLink)" class="copy-btn">
@@ -130,7 +162,7 @@
         <div v-if="previewResult.data" class="preview-item">
           <label>预览链接：</label>
           <div class="link-item">
-            <a :href="previewResult.data" target="_blank" class="result-link">
+            <a :href="previewResult.data" target="_blank" class="result-link" rel="noopener noreferrer">
               {{ previewResult.data }}
             </a>
             <button @click="copyToClipboard(previewResult.data)" class="copy-btn">
@@ -386,6 +418,49 @@ const copyToClipboard = async (text) => {
   color: var(--vp-c-brand-dark);
 }
 
+.input-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-border-soft);
+}
+
+.preview-label {
+  font-size: 12px;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+}
+
+.input-link {
+  color: var(--vp-c-brand);
+  text-decoration: none;
+  font-size: 12px;
+  word-break: break-all;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.input-link::before {
+  content: "🔗";
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.input-link:hover {
+  text-decoration: underline;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-brand-dark);
+}
+
 .error-message {
   margin: 16px 0;
   padding: 12px 16px;
@@ -479,10 +554,24 @@ const copyToClipboard = async (text) => {
   word-break: break-all;
   flex: 1;
   min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.result-link::before {
+  content: "🔗";
+  font-size: 12px;
+  opacity: 0.7;
 }
 
 .result-link:hover {
   text-decoration: underline;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-brand-dark);
 }
 
 .copy-btn {
