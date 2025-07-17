@@ -6,7 +6,7 @@ hero:
   text: "网盘分享链接云解析服务"
   tagline: 将网盘分享下载链接转化为直链的云解析服务
   image:
-    src: https://lz.qaiu.top/img/lanzou111.403f7881.png
+    src: /logo.svg
     alt: NFD Parser
   actions:
     - theme: brand
@@ -152,8 +152,8 @@ GET /v2/statisticsInfo
     "success": true,
     "count": 0,
     "data": {
-        "downLink": "https://lz.qaiu.top/d/fj/xx",
-        "apiLink": "https://lz.qaiu.top/json/fj/xx",
+        "downLink": "https://your-api-domain.com/d/fj/xx",
+        "apiLink": "https://your-api-domain.com/json/fj/xx",
         "cacheHitTotal": 5,
         "parserTotal": 2,
         "sumTotal": 7,
@@ -317,9 +317,7 @@ parseShareLink('https://lanzoux.com/ia2cntg')
 - **作者**: qaiu
 - **许可证**: 请查看原项目许可证
 - **QQ群**: 1017480890
-- **预览地址**: 
-  - [https://lz.qaiu.top](https://lz.qaiu.top)
-  - [http://www.722shop.top:6401](http://www.722shop.top:6401)
+- **部署示例**: 请参考 [部署指南](deployment) 搭建您自己的服务
 
 ## 免责声明
 

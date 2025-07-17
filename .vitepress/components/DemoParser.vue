@@ -178,14 +178,34 @@ const parseLink = async () => {
       pwd: password.value || ''
     })
     
-    const response = await fetch(`https://lz.qaiu.top/v2/linkInfo?${params}`)
-    const data = await response.json()
-    
-    if (data.success) {
-      result.value = data.data
-    } else {
-      error.value = data.msg || '解析失败'
+    // 模拟 API 响应，避免依赖外部服务
+    const mockResponse = {
+      success: true,
+      data: {
+        downLink: "https://your-api-domain.com/d/iz/example",
+        apiLink: "https://your-api-domain.com/json/iz/example",
+        cacheHitTotal: 5,
+        parserTotal: 2,
+        sumTotal: 7,
+        shareLinkInfo: {
+          shareKey: "example",
+          panName: "蓝奇云优享",
+          type: "iz",
+          sharePassword: "",
+          shareUrl: shareUrl.value,
+          standardUrl: shareUrl.value,
+          otherParam: {
+            UA: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          cacheKey: "iz:example"
+        }
+      }
     }
+    
+    // 模拟网络延迟
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    result.value = mockResponse.data
   } catch (err) {
     error.value = '网络请求失败，请检查网络连接'
     console.error('Parse error:', err)
@@ -211,17 +231,16 @@ const previewLink = async () => {
       pwd: password.value || ''
     })
     
-    const response = await fetch(`https://lz.qaiu.top/v2/linkInfo?${params}`)
-    const data = await response.json()
-    
-    if (data.success && data.data) {
-      // 模拟预览结果，实际应该从API获取预览URL
-      previewResult.value = {
-        data: data.data.downLink || data.data.apiLink
-      }
-    } else {
-      error.value = data.msg || '预览失败'
+    // 模拟预览响应，避免依赖外部服务
+    const mockPreviewResponse = {
+      success: true,
+      data: "https://your-api-domain.com/d/iz/example"
     }
+    
+    // 模拟网络延迟
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    previewResult.value = mockPreviewResponse
   } catch (err) {
     error.value = '网络请求失败，请检查网络连接'
     console.error('Preview error:', err)

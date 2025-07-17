@@ -16,24 +16,24 @@
 
 ```bash
 # 解析蓝奏云分享链接
-curl "https://lz.qaiu.top/json/parser?url=https://www.ilanzou.com/s/Wch0DGj8"
+curl "https://your-api-domain.com/json/parser?url=https://www.ilanzou.com/s/Wch0DGj8"
 
 # 解析带密码的分享链接
-curl "https://lz.qaiu.top/json/parser?url=https://www.ilanzou.com/s/Wch0DGj8&pwd=密码"
+curl "https://your-api-domain.com/json/parser?url=https://www.ilanzou.com/s/Wch0DGj8&pwd=密码"
 ```
 
 ### 2. 直接跳转下载
 
 ```bash
 # 直接获取下载链接（会重定向）
-curl -L "https://lz.qaiu.top/parser?url=https://www.ilanzou.com/s/Wch0DGj8"
+curl -L "https://your-api-domain.com/parser?url=https://www.ilanzou.com/s/Wch0DGj8"
 ```
 
 ### 3. 获取分享链接详情
 
 ```bash
 # 获取链接信息和统计数据
-curl "https://lz.qaiu.top/v2/linkInfo?url=https://www.ilanzou.com/s/Wch0DGj8&pwd="
+curl "https://your-api-domain.com/v2/linkInfo?url=https://www.ilanzou.com/s/Wch0DGj8&pwd="
 ```
 
 ## 接口说明
