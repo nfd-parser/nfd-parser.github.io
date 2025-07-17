@@ -1,0 +1,26 @@
+{
+  "name": "nfd-parser.github.io",
+  "version": "1.0.0",
+  "description": "网盘分享链接云解析服务参考文档 - VitePress 版本",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:serve": "vitepress serve docs"
+  },
+  "keywords": [
+    "nfd-parser",
+    "documentation",
+    "vitepress",
+    "网盘解析"
+  ],
+  "author": "NFD Parser Team",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
