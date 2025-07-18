@@ -40,7 +40,7 @@
             class="btn btn-secondary"
           >
             <span v-if="loading">预览中...</span>
-            <span v-else">👁️ 预览</span>
+            <span v-else>👁️ 预览</span>
           </button>
         </div>
       </div>
@@ -178,34 +178,16 @@ const parseLink = async () => {
       pwd: password.value || ''
     })
     
-    // 模拟 API 响应，避免依赖外部服务
-    const mockResponse = {
-      success: true,
-      data: {
-        downLink: "https://your-api-domain.com/d/iz/example",
-        apiLink: "https://your-api-domain.com/json/iz/example",
-        cacheHitTotal: 5,
-        parserTotal: 2,
-        sumTotal: 7,
-        shareLinkInfo: {
-          shareKey: "example",
-          panName: "蓝奇云优享",
-          type: "iz",
-          sharePassword: "",
-          shareUrl: shareUrl.value,
-          standardUrl: shareUrl.value,
-          otherParam: {
-            UA: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          },
-          cacheKey: "iz:example"
-        }
-      }
+    // 使用 lzzz.qaiu.top API
+    const apiUrl = `https://lzzz.qaiu.top/v2/linkInfo?${params}`
+    const response = await fetch(apiUrl)
+    const mockResponse = await response.json()
+    
+    if (mockResponse.success) {
+      result.value = mockResponse.data
+    } else {
+      error.value = mockResponse.msg || '解析失败'
     }
-    
-    // 模拟网络延迟
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    result.value = mockResponse.data
   } catch (err) {
     error.value = '网络请求失败，请检查网络连接'
     console.error('Parse error:', err)
@@ -231,16 +213,14 @@ const previewLink = async () => {
       pwd: password.value || ''
     })
     
-    // 模拟预览响应，避免依赖外部服务
-    const mockPreviewResponse = {
+    // 使用 lzzz.qaiu.top 预览 API
+    const previewUrl = `https://lzzz.qaiu.top/v2/view/?${params}`
+    
+    // 设置预览结果
+    previewResult.value = {
       success: true,
-      data: "https://your-api-domain.com/d/iz/example"
+      data: previewUrl
     }
-    
-    // 模拟网络延迟
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    previewResult.value = mockPreviewResponse
   } catch (err) {
     error.value = '网络请求失败，请检查网络连接'
     console.error('Preview error:', err)
