@@ -214,7 +214,7 @@ const previewLink = async () => {
     })
     
     // 使用 lzzz.qaiu.top 预览 API
-    const previewUrl = `https://lzzz.qaiu.top/v2/view/?${params}`
+    const previewUrl = `https://lzzz.qaiu.top/v2/preview?${params}`
     
     // 设置预览结果
     previewResult.value = {
