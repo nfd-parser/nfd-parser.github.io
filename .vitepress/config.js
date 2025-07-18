@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'NFD Parser 文档',
+  title: 'NFD云解析参考文档',
   description: '网盘分享链接云解析服务参考文档',
   
   // GitHub Pages 配置
@@ -9,7 +9,7 @@ export default defineConfig({
   
   head: [
     ['meta', { name: 'author', content: 'NFD Parser Team' }],
-    ['meta', { property: 'og:title', content: 'NFD Parser 文档' }],
+    ['meta', { property: 'og:title', content: 'NFD云解析参考文档' }],
     ['meta', { property: 'og:description', content: '网盘分享链接云解析服务参考文档' }],
     ['link', { rel: 'icon', href: '/logo.svg' }]
   ],
@@ -17,8 +17,8 @@ export default defineConfig({
   // 主题配置
   themeConfig: {
     // 网站标题和logo
-    siteTitle: 'NFD Parser',
-    logo: '/logo.svg',
+    siteTitle: false,
+    logo: '/nfd-logo.png',
     
     // 导航栏
     nav: [
