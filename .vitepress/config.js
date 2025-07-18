@@ -17,7 +17,7 @@ export default defineConfig({
   // 主题配置
   themeConfig: {
     // 网站标题和logo
-    siteTitle: 'NFD Parser',
+    siteTitle: false,
     logo: '/nfd-logo.png',
     
     // 导航栏
