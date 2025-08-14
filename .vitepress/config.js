@@ -11,13 +11,13 @@ export default defineConfig({
     ['meta', { name: 'author', content: 'NFD Parser Team' }],
     ['meta', { property: 'og:title', content: 'NFD云解析参考文档' }],
     ['meta', { property: 'og:description', content: '网盘分享链接云解析服务参考文档' }],
-    ['link', { rel: 'icon', href: '/logo.svg' }]
+    ['link', { rel: 'icon', href: '/nfd-logo.png' }]
   ],
 
   // 主题配置
   themeConfig: {
-    // 网站标题和logo
-    siteTitle: false,
+    // 网站标题和logo - 使用自定义标题而不是 false
+    siteTitle: 'NFD Parser',
     logo: '/nfd-logo.png',
     
     // 导航栏
@@ -104,7 +104,7 @@ export default defineConfig({
 
     // 页脚
     footer: {
-      message: '基于 netdisk-fast-download 项目的参考文档',
+      message: '基于 netdisk-fast-download 项目的参考文档 | Powered by <a href="https://vitepress.dev" target="_blank">VitePress</a>',
       copyright: 'Copyright © 2024 NFD Parser Team'
     },
 

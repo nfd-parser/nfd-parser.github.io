@@ -1,0 +1,173 @@
+/* 自定义 CSS 样式 */
+:root {
+  /* 品牌颜色 */
+  --vp-c-brand-1: #3451b2;
+  --vp-c-brand-2: #3a5ccc;
+  --vp-c-brand-3: #4969ed;
+  
+  /* 暗色模式品牌颜色 */
+  --vp-c-brand-dark-1: #4969ed;
+  --vp-c-brand-dark-2: #5970f0;
+  --vp-c-brand-dark-3: #6977f3;
+}
+
+/* 完全替换导航栏品牌文字 - 使用更强的选择器 */
+.VPNavBarTitle .title,
+.VPNavBar .VPNavBarTitle .title {
+  visibility: hidden !important;
+  position: relative;
+  font-size: inherit !important;
+}
+
+.VPNavBarTitle .title::before,
+.VPNavBar .VPNavBarTitle .title::before {
+  content: "NFD Parser" !important;
+  visibility: visible;
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  white-space: nowrap;
+}
+
+/* 如果存在logo，调整间距 */
+.VPNavBarTitle .logo + .title {
+  margin-left: 8px;
+}
+
+/* 导航栏样式优化 */
+.VPNav {
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+/* 侧边栏样式优化 */
+.VPSidebar {
+  background-color: var(--vp-sidebar-bg-color);
+}
+
+.VPSidebarItem.level-0 .items {
+  padding-left: 16px;
+}
+
+/* 内容区域优化 */
+.VPContent {
+  background: var(--vp-c-bg);
+}
+
+/* 代码块样式 */
+.vp-code-group .tabs {
+  border-radius: 8px 8px 0 0;
+}
+
+.vp-code-group .blocks {
+  border-radius: 0 0 8px 8px;
+}
+
+/* 特色功能卡片样式 */
+.VPFeature {
+  border: 1px solid var(--vp-c-border);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+  transition: border-color 0.25s, background-color 0.25s;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg);
+}
+
+/* 按钮样式优化 */
+.VPButton.brand {
+  border: 1px solid var(--vp-c-brand-1);
+  color: var(--vp-c-white);
+  background-color: var(--vp-c-brand-1);
+  border-radius: 8px;
+  padding: 0 20px;
+  line-height: 38px;
+  font-size: 14px;
+  display: inline-block;
+  font-weight: 500;
+  transition: all 0.25s;
+}
+
+.VPButton.brand:hover {
+  border-color: var(--vp-c-brand-2);
+  background-color: var(--vp-c-brand-2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 81, 178, 0.3);
+}
+
+/* 表格样式 */
+table {
+  border-collapse: collapse;
+  margin: 20px 0;
+  width: 100%;
+}
+
+table th,
+table td {
+  border: 1px solid var(--vp-c-divider);
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: var(--vp-c-bg-soft);
+  font-weight: 600;
+}
+
+/* 链接样式 */
+a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+
+a:hover {
+  color: var(--vp-c-brand-2);
+}
+
+/* 页脚样式 */
+.VPFooter {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 32px 24px;
+  background: var(--vp-c-bg-soft);
+}
+
+/* 目录导航样式 */
+.VPDocAsideOutline .outline-title {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .VPFeature {
+    padding: 20px;
+  }
+  
+  .VPButton.brand {
+    padding: 0 16px;
+    line-height: 36px;
+    font-size: 13px;
+  }
+}
+
+/* 代码块滚动条样式 */
+.vp-code::-webkit-scrollbar {
+  height: 8px;
+}
+
+.vp-code::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+}
+
+.vp-code::-webkit-scrollbar-thumb {
+  background: var(--vp-c-text-3);
+  border-radius: 4px;
+}
+
+.vp-code::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-text-2);
+}
