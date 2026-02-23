@@ -27,95 +27,349 @@ curl "http://your_host:6400/json/parser?url=https://lanzoux.com/ia2cntg"
 
 ## 编程语言示例
 
-### JavaScript / Node.js
+### 基础封装类
 
-#### 基础封装类
-```javascript
+::: code-group
+
+```javascript [JavaScript]
 class NFDParser {
     constructor(baseUrl = 'http://localhost:6400') {
         this.baseUrl = baseUrl;
     }
-    
-    /**
-     * 解析分享链接
-     * @param {string} shareUrl - 分享链接
-     * @param {string} password - 分享密码（可选）
-     * @returns {Promise<Object>} 解析结果
-     */
+
     async parseLink(shareUrl, password = '') {
         const params = new URLSearchParams({ url: shareUrl });
-        if (password) {
-            params.append('pwd', password);
-        }
-        
-        try {
-            const response = await fetch(`${this.baseUrl}/json/parser?${params}`);
-            const result = await response.json();
-            
-            if (result.success) {
-                return result.data;
-            } else {
-                throw new Error(result.msg);
-            }
-        } catch (error) {
-            console.error('解析失败:', error);
-            throw error;
-        }
+        if (password) params.append('pwd', password);
+
+        const response = await fetch(`${this.baseUrl}/json/parser?${params}`);
+        const result = await response.json();
+
+        if (result.success) return result.data;
+        throw new Error(result.msg);
     }
-    
-    /**
-     * 获取直链（自动跳转）
-     * @param {string} shareUrl - 分享链接
-     * @param {string} password - 分享密码（可选）
-     * @returns {string} 重定向URL
-     */
+
     getDirectUrl(shareUrl, password = '') {
         const params = new URLSearchParams({ url: shareUrl });
-        if (password) {
-            params.append('pwd', password);
-        }
+        if (password) params.append('pwd', password);
         return `${this.baseUrl}/parser?${params}`;
     }
-    
-    /**
-     * 获取文件夹列表
-     * @param {string} shareUrl - 文件夹分享链接
-     * @param {string} password - 分享密码（可选）
-     * @returns {Promise<Array>} 文件列表
-     */
+
     async getFileList(shareUrl, password = '') {
         const params = new URLSearchParams({ url: shareUrl });
-        if (password) {
-            params.append('pwd', password);
-        }
-        
+        if (password) params.append('pwd', password);
+
         const response = await fetch(`${this.baseUrl}/v2/getFileList?${params}`);
         const result = await response.json();
-        
-        if (result.success) {
-            return result.data;
-        } else {
-            throw new Error(result.msg);
-        }
-    }
-    
-    /**
-     * 获取统计信息
-     * @returns {Promise<Object>} 统计数据
-     */
-    async getStatistics() {
-        const response = await fetch(`${this.baseUrl}/v2/statisticsInfo`);
-        const result = await response.json();
-        
-        if (result.success) {
-            return result.data;
-        } else {
-            throw new Error(result.msg);
-        }
+
+        if (result.success) return result.data;
+        throw new Error(result.msg);
     }
 }
+```
 
-// 使用示例
+```python [Python]
+import requests
+from urllib.parse import urlencode
+from typing import Dict, List, Any
+
+class NFDParser:
+    def __init__(self, base_url: str = 'http://localhost:6400'):
+        self.base_url = base_url
+        self.session = requests.Session()
+
+    def parse_link(self, share_url: str, password: str = '') -> Dict[str, Any]:
+        params = {'url': share_url}
+        if password:
+            params['pwd'] = password
+
+        response = self.session.get(
+            f'{self.base_url}/json/parser', params=params, timeout=30
+        )
+        response.raise_for_status()
+        result = response.json()
+
+        if result.get('success'):
+            return result['data']
+        raise Exception(result.get('msg', '解析失败'))
+
+    def get_direct_url(self, share_url: str, password: str = '') -> str:
+        params = {'url': share_url}
+        if password:
+            params['pwd'] = password
+        return f"{self.base_url}/parser?{urlencode(params)}"
+
+    def get_file_list(self, share_url: str, password: str = '') -> List[Dict]:
+        params = {'url': share_url}
+        if password:
+            params['pwd'] = password
+
+        response = self.session.get(
+            f'{self.base_url}/v2/getFileList', params=params, timeout=30
+        )
+        response.raise_for_status()
+        result = response.json()
+
+        if result.get('success'):
+            return result['data']
+        raise Exception(result.get('msg', '获取文件列表失败'))
+```
+
+```php [PHP]
+<?php
+class NFDParser {
+    private $baseUrl;
+
+    public function __construct($baseUrl = 'http://localhost:6400') {
+        $this->baseUrl = rtrim($baseUrl, '/');
+    }
+
+    public function parseLink($shareUrl, $password = '') {
+        $params = ['url' => $shareUrl];
+        if (!empty($password)) $params['pwd'] = $password;
+
+        $url = $this->baseUrl . '/json/parser?' . http_build_query($params);
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200)
+            throw new Exception("HTTP请求失败: $httpCode");
+
+        $result = json_decode($response, true);
+        if ($result['success']) return $result['data'];
+        throw new Exception($result['msg'] ?? '解析失败');
+    }
+
+    public function getDirectUrl($shareUrl, $password = '') {
+        $params = ['url' => $shareUrl];
+        if (!empty($password)) $params['pwd'] = $password;
+        return $this->baseUrl . '/parser?' . http_build_query($params);
+    }
+
+    public function getFileList($shareUrl, $password = '') {
+        $params = ['url' => $shareUrl];
+        if (!empty($password)) $params['pwd'] = $password;
+
+        $url = $this->baseUrl . '/v2/getFileList?' . http_build_query($params);
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+        ]);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $result = json_decode($response, true);
+        if ($result['success']) return $result['data'];
+        throw new Exception($result['msg'] ?? '获取文件列表失败');
+    }
+}
+?>
+```
+
+```java [Java]
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.http.*;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+public class NFDParser {
+    private final String baseUrl;
+    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper;
+
+    public NFDParser(String baseUrl) {
+        this.baseUrl = baseUrl.endsWith("/")
+            ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        this.httpClient = HttpClient.newHttpClient();
+        this.objectMapper = new ObjectMapper();
+    }
+
+    public NFDParser() { this("http://localhost:6400"); }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> parseLink(String shareUrl, String password)
+            throws Exception {
+        String url = baseUrl + "/json/parser?url="
+            + URLEncoder.encode(shareUrl, StandardCharsets.UTF_8);
+        if (password != null && !password.isEmpty())
+            url += "&pwd=" + URLEncoder.encode(password, StandardCharsets.UTF_8);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url)).GET().build();
+        HttpResponse<String> response = httpClient.send(
+                request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200)
+            throw new RuntimeException("HTTP " + response.statusCode());
+
+        Map<String, Object> result = objectMapper.readValue(
+                response.body(), Map.class);
+        if (Boolean.TRUE.equals(result.get("success")))
+            return (Map<String, Object>) result.get("data");
+        throw new RuntimeException((String) result.get("msg"));
+    }
+
+    public String getDirectUrl(String shareUrl, String password) {
+        String url = baseUrl + "/parser?url="
+            + URLEncoder.encode(shareUrl, StandardCharsets.UTF_8);
+        if (password != null && !password.isEmpty())
+            url += "&pwd=" + URLEncoder.encode(password, StandardCharsets.UTF_8);
+        return url;
+    }
+}
+```
+
+```lua [Lua]
+local http = require("socket.http")
+local ltn12 = require("ltn12")
+local json = require("cjson")
+
+local NFDParser = {}
+NFDParser.__index = NFDParser
+
+function NFDParser.new(baseUrl)
+    local self = setmetatable({}, NFDParser)
+    self.baseUrl = baseUrl or "http://localhost:6400"
+    return self
+end
+
+function NFDParser:parseLink(shareUrl, password)
+    local url = self.baseUrl .. "/json/parser?url=" .. self:urlEncode(shareUrl)
+    if password and password ~= "" then
+        url = url .. "&pwd=" .. self:urlEncode(password)
+    end
+
+    local respBody = {}
+    local _, code = http.request{
+        url = url,
+        sink = ltn12.sink.table(respBody),
+    }
+
+    if code ~= 200 then
+        error("HTTP请求失败: " .. tostring(code))
+    end
+
+    local result = json.decode(table.concat(respBody))
+    if result.success then
+        return result.data
+    end
+    error(result.msg or "解析失败")
+end
+
+function NFDParser:getDirectUrl(shareUrl, password)
+    local url = self.baseUrl .. "/parser?url=" .. self:urlEncode(shareUrl)
+    if password and password ~= "" then
+        url = url .. "&pwd=" .. self:urlEncode(password)
+    end
+    return url
+end
+
+function NFDParser:getFileList(shareUrl, password)
+    local url = self.baseUrl .. "/v2/getFileList?url=" .. self:urlEncode(shareUrl)
+    if password and password ~= "" then
+        url = url .. "&pwd=" .. self:urlEncode(password)
+    end
+
+    local respBody = {}
+    local _, code = http.request{
+        url = url,
+        sink = ltn12.sink.table(respBody),
+    }
+
+    if code ~= 200 then
+        error("HTTP请求失败: " .. tostring(code))
+    end
+
+    local result = json.decode(table.concat(respBody))
+    if result.success then
+        return result.data
+    end
+    error(result.msg or "获取文件列表失败")
+end
+
+function NFDParser:urlEncode(str)
+    return (str:gsub("([^%w%-%.%_%~])", function(c)
+        return string.format("%%%02X", string.byte(c))
+    end))
+end
+
+return NFDParser
+```
+
+```e [易语言]
+.版本 2
+.支持库 spec
+
+.程序集 NFD解析器
+
+.子程序 解析链接, 文本型, 公开, 解析网盘分享链接，返回JSON结果
+.参数 服务地址, 文本型, , 如 "http://localhost:6400"
+.参数 分享链接, 文本型, , 分享链接地址
+.参数 分享密码, 文本型, 可空, 提取码（可选）
+.局部变量 请求地址, 文本型
+.局部变量 返回数据, 文本型
+
+请求地址 ＝ 服务地址 ＋ "/json/parser?url=" ＋ 编码_URL编码 (分享链接)
+.如果 (分享密码 ≠ "")
+    请求地址 ＝ 请求地址 ＋ "&pwd=" ＋ 编码_URL编码 (分享密码)
+.如果结束
+返回数据 ＝ 网页_访问_对象 (请求地址, 0, , , , , , , , , , , , )
+返回 (返回数据)
+
+.子程序 取直链地址, 文本型, 公开, 获取302重定向直链URL
+.参数 服务地址, 文本型
+.参数 分享链接, 文本型
+.参数 分享密码, 文本型, 可空
+.局部变量 请求地址, 文本型
+
+请求地址 ＝ 服务地址 ＋ "/parser?url=" ＋ 编码_URL编码 (分享链接)
+.如果 (分享密码 ≠ "")
+    请求地址 ＝ 请求地址 ＋ "&pwd=" ＋ 编码_URL编码 (分享密码)
+.如果结束
+返回 (请求地址)
+
+.子程序 取文件列表, 文本型, 公开, 获取文件夹文件列表JSON
+.参数 服务地址, 文本型
+.参数 分享链接, 文本型
+.参数 分享密码, 文本型, 可空
+.局部变量 请求地址, 文本型
+.局部变量 返回数据, 文本型
+
+请求地址 ＝ 服务地址 ＋ "/v2/getFileList?url=" ＋ 编码_URL编码 (分享链接)
+.如果 (分享密码 ≠ "")
+    请求地址 ＝ 请求地址 ＋ "&pwd=" ＋ 编码_URL编码 (分享密码)
+.如果结束
+返回数据 ＝ 网页_访问_对象 (请求地址, 0, , , , , , , , , , , , )
+返回 (返回数据)
+
+' ---- 使用示例 ----
+.子程序 使用示例
+.局部变量 结果, 文本型
+
+结果 ＝ 解析链接 ("http://localhost:6400", "https://lanzoux.com/ia2cntg", "")
+调试输出 ("解析结果: " ＋ 结果)
+
+结果 ＝ 取直链地址 ("http://localhost:6400", "https://lanzoux.com/ia2cntg", "")
+调试输出 ("直链地址: " ＋ 结果)
+```
+
+:::
+
+### 使用示例
+
+::: code-group
+
+```javascript [JavaScript]
 const parser = new NFDParser('http://localhost:6400');
 
 // 解析单个文件
@@ -123,183 +377,135 @@ parser.parseLink('https://lanzoux.com/ia2cntg')
     .then(data => {
         console.log('直链:', data.directLink);
         console.log('缓存命中:', data.cacheHit);
-        console.log('过期时间:', data.expires);
     })
-    .catch(error => {
-        console.error('解析失败:', error.message);
-    });
+    .catch(error => console.error('解析失败:', error.message));
 
-// 解析文件夹
+// 获取文件列表
 parser.getFileList('https://lanzoux.com/folder_link')
     .then(files => {
-        files.forEach(file => {
-            console.log(`文件: ${file.fileName}, 大小: ${file.sizeStr}`);
-        });
-    })
-    .catch(error => {
-        console.error('获取文件列表失败:', error.message);
+        files.forEach(f => console.log(`${f.fileName} - ${f.sizeStr}`));
     });
 ```
 
-#### Express.js 中间件示例
-```javascript
+```python [Python]
+parser = NFDParser('http://localhost:6400')
+
+try:
+    result = parser.parse_link('https://lanzoux.com/ia2cntg')
+    print(f"直链: {result['directLink']}")
+    print(f"缓存命中: {result['cacheHit']}")
+
+    files = parser.get_file_list('https://lanzoux.com/folder_link')
+    for f in files:
+        print(f"{f['fileName']} - {f['sizeStr']}")
+except Exception as e:
+    print(f"错误: {e}")
+```
+
+```php [PHP]
+<?php
+$parser = new NFDParser('http://localhost:6400');
+
+try {
+    $result = $parser->parseLink('https://lanzoux.com/ia2cntg');
+    echo "直链: " . $result['directLink'] . "\n";
+    echo "缓存命中: " . ($result['cacheHit'] ? '是' : '否') . "\n";
+
+    $files = $parser->getFileList('https://lanzoux.com/folder_link');
+    foreach ($files as $file) {
+        echo $file['fileName'] . " - " . $file['sizeStr'] . "\n";
+    }
+} catch (Exception $e) {
+    echo "错误: " . $e->getMessage() . "\n";
+}
+?>
+```
+
+```java [Java]
+public static void main(String[] args) {
+    try {
+        NFDParser parser = new NFDParser("http://localhost:6400");
+
+        Map<String, Object> result = parser.parseLink(
+            "https://lanzoux.com/ia2cntg", "");
+        System.out.println("直链: " + result.get("directLink"));
+        System.out.println("缓存命中: " + result.get("cacheHit"));
+
+    } catch (Exception e) {
+        System.err.println("错误: " + e.getMessage());
+    }
+}
+```
+
+```lua [Lua]
+local NFDParser = require("nfd_parser")
+local parser = NFDParser.new("http://localhost:6400")
+
+-- 解析单个文件
+local ok, result = pcall(parser.parseLink, parser, "https://lanzoux.com/ia2cntg")
+if ok then
+    print("直链: " .. result.directLink)
+    print("缓存命中: " .. tostring(result.cacheHit))
+else
+    print("解析失败: " .. result)
+end
+
+-- 获取文件列表
+local ok2, files = pcall(parser.getFileList, parser, "https://lanzoux.com/folder_link")
+if ok2 then
+    for _, f in ipairs(files) do
+        print(f.fileName .. " - " .. f.sizeStr)
+    end
+end
+```
+
+```e [易语言]
+.子程序 _按钮_解析_被单击
+
+.局部变量 结果, 文本型
+.局部变量 json, 类_json
+
+结果 ＝ 解析链接 ("http://localhost:6400", 编辑框_链接.内容, 编辑框_密码.内容)
+
+json.解析 (结果)
+.如果 (json.取通用属性 ("success") ＝ "true")
+    编辑框_结果.内容 ＝ "直链: " ＋ json.取通用属性 ("data.directLink")
+.否则
+    编辑框_结果.内容 ＝ "解析失败: " ＋ json.取通用属性 ("msg")
+.如果结束
+```
+
+:::
+
+### 框架集成
+
+::: code-group
+
+```javascript [Express.js]
 const express = require('express');
 const app = express();
 
-// NFD Parser 中间件
 async function parseNetdiskMiddleware(req, res, next) {
     const { url, password } = req.query;
-    
-    if (!url) {
-        return res.status(400).json({ error: '缺少分享链接参数' });
-    }
-    
+    if (!url) return res.status(400).json({ error: '缺少分享链接参数' });
+
     try {
         const parser = new NFDParser();
-        const result = await parser.parseLink(url, password);
-        req.parsedResult = result;
+        req.parsedResult = await parser.parseLink(url, password);
         next();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
 
-// 使用中间件
 app.get('/parse', parseNetdiskMiddleware, (req, res) => {
-    res.json({
-        success: true,
-        data: req.parsedResult
-    });
+    res.json({ success: true, data: req.parsedResult });
 });
 
-app.listen(3000, () => {
-    console.log('服务启动在端口 3000');
-});
+app.listen(3000);
 ```
 
-### Python
-
-#### 基础封装类
-```python
-import requests
-from urllib.parse import urlencode
-from typing import Optional, Dict, List, Any
-
-class NFDParser:
-    def __init__(self, base_url: str = 'http://localhost:6400'):
-        self.base_url = base_url
-        self.session = requests.Session()
-    
-    def parse_link(self, share_url: str, password: str = '') -> Dict[str, Any]:
-        """
-        解析分享链接
-        
-        Args:
-            share_url: 分享链接
-            password: 分享密码（可选）
-            
-        Returns:
-            解析结果字典
-        """
-        params = {'url': share_url}
-        if password:
-            params['pwd'] = password
-        
-        try:
-            response = self.session.get(
-                f'{self.base_url}/json/parser',
-                params=params,
-                timeout=30
-            )
-            response.raise_for_status()
-            
-            result = response.json()
-            if result.get('success'):
-                return result['data']
-            else:
-                raise Exception(result.get('msg', '解析失败'))
-                
-        except requests.RequestException as e:
-            raise Exception(f'请求失败: {str(e)}')
-    
-    def get_direct_url(self, share_url: str, password: str = '') -> str:
-        """
-        获取直链（重定向URL）
-        
-        Args:
-            share_url: 分享链接
-            password: 分享密码（可选）
-            
-        Returns:
-            重定向URL
-        """
-        params = {'url': share_url}
-        if password:
-            params['pwd'] = password
-        
-        return f"{self.base_url}/parser?{urlencode(params)}"
-    
-    def get_file_list(self, share_url: str, password: str = '') -> List[Dict[str, Any]]:
-        """
-        获取文件夹列表
-        
-        Args:
-            share_url: 文件夹分享链接
-            password: 分享密码（可选）
-            
-        Returns:
-            文件列表
-        """
-        params = {'url': share_url}
-        if password:
-            params['pwd'] = password
-        
-        response = self.session.get(
-            f'{self.base_url}/v2/getFileList',
-            params=params,
-            timeout=30
-        )
-        response.raise_for_status()
-        
-        result = response.json()
-        if result.get('success'):
-            return result['data']
-        else:
-            raise Exception(result.get('msg', '获取文件列表失败'))
-    
-    def get_statistics(self) -> Dict[str, Any]:
-        """获取统计信息"""
-        response = self.session.get(f'{self.base_url}/v2/statisticsInfo')
-        response.raise_for_status()
-        
-        result = response.json()
-        if result.get('success'):
-            return result['data']
-        else:
-            raise Exception(result.get('msg', '获取统计信息失败'))
-
-# 使用示例
-if __name__ == '__main__':
-    parser = NFDParser('http://localhost:6400')
-    
-    try:
-        # 解析单个文件
-        result = parser.parse_link('https://lanzoux.com/ia2cntg')
-        print(f"直链: {result['directLink']}")
-        print(f"缓存命中: {result['cacheHit']}")
-        print(f"过期时间: {result['expires']}")
-        
-        # 获取统计信息
-        stats = parser.get_statistics()
-        print(f"解析总数: {stats['parserTotal']}")
-        print(f"缓存总数: {stats['cacheTotal']}")
-        
-    except Exception as e:
-        print(f"错误: {e}")
-```
-
-#### Django 视图示例
-```python
+```python [Django]
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -312,210 +518,57 @@ def parse_netdisk_view(request):
         data = json.loads(request.body)
         share_url = data.get('url')
         password = data.get('password', '')
-        
+
         if not share_url:
-            return JsonResponse({
-                'success': False,
-                'error': '缺少分享链接参数'
-            }, status=400)
-        
+            return JsonResponse(
+                {'success': False, 'error': '缺少分享链接参数'}, status=400)
+
         parser = NFDParser()
         result = parser.parse_link(share_url, password)
-        
-        return JsonResponse({
-            'success': True,
-            'data': result
-        })
-        
+        return JsonResponse({'success': True, 'data': result})
+
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse(
+            {'success': False, 'error': str(e)}, status=500)
 ```
 
-### PHP
+```lua [OpenResty]
+local http = require("resty.http")
+local cjson = require("cjson")
 
-```php
-<?php
-class NFDParser {
-    private $baseUrl;
-    
-    public function __construct($baseUrl = 'http://localhost:6400') {
-        $this->baseUrl = rtrim($baseUrl, '/');
-    }
-    
-    /**
-     * 解析分享链接
-     */
-    public function parseLink($shareUrl, $password = '') {
-        $params = ['url' => $shareUrl];
-        if (!empty($password)) {
-            $params['pwd'] = $password;
-        }
-        
-        $url = $this->baseUrl . '/json/parser?' . http_build_query($params);
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($httpCode !== 200) {
-            throw new Exception("HTTP请求失败: $httpCode");
-        }
-        
-        $result = json_decode($response, true);
-        if ($result['success']) {
-            return $result['data'];
-        } else {
-            throw new Exception($result['msg'] ?? '解析失败');
-        }
-    }
-    
-    /**
-     * 获取直链URL
-     */
-    public function getDirectUrl($shareUrl, $password = '') {
-        $params = ['url' => $shareUrl];
-        if (!empty($password)) {
-            $params['pwd'] = $password;
-        }
-        
-        return $this->baseUrl . '/parser?' . http_build_query($params);
-    }
-    
-    /**
-     * 获取文件列表
-     */
-    public function getFileList($shareUrl, $password = '') {
-        $params = ['url' => $shareUrl];
-        if (!empty($password)) {
-            $params['pwd'] = $password;
-        }
-        
-        $url = $this->baseUrl . '/v2/getFileList?' . http_build_query($params);
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        
-        $response = curl_exec($ch);
-        curl_close($ch);
-        
-        $result = json_decode($response, true);
-        if ($result['success']) {
-            return $result['data'];
-        } else {
-            throw new Exception($result['msg'] ?? '获取文件列表失败');
-        }
-    }
-}
+local _M = {}
 
-// 使用示例
-try {
-    $parser = new NFDParser('http://localhost:6400');
-    
-    // 解析链接
-    $result = $parser->parseLink('https://lanzoux.com/ia2cntg');
-    echo "直链: " . $result['directLink'] . "\n";
-    echo "缓存命中: " . ($result['cacheHit'] ? '是' : '否') . "\n";
-    
-} catch (Exception $e) {
-    echo "错误: " . $e->getMessage() . "\n";
-}
-?>
+function _M.parse_handler(self)
+    local args = ngx.req.get_uri_args()
+    local share_url = args.url
+    if not share_url then
+        ngx.status = 400
+        ngx.say(cjson.encode({success = false, error = "缺少分享链接参数"}))
+        return
+    end
+
+    local httpc = http.new()
+    local api_url = "http://127.0.0.1:6400/json/parser?url="
+        .. ngx.escape_uri(share_url)
+    if args.pwd then
+        api_url = api_url .. "&pwd=" .. ngx.escape_uri(args.pwd)
+    end
+
+    local res, err = httpc:request_uri(api_url, {method = "GET"})
+    if not res then
+        ngx.status = 500
+        ngx.say(cjson.encode({success = false, error = err}))
+        return
+    end
+
+    ngx.header.content_type = "application/json"
+    ngx.say(res.body)
+end
+
+return _M
 ```
 
-### Java
-
-```java
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
-import java.util.Map;
-import java.util.HashMap;
-
-public class NFDParser {
-    private final String baseUrl;
-    private final HttpClient httpClient;
-    private final ObjectMapper objectMapper;
-    
-    public NFDParser(String baseUrl) {
-        this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
-    }
-    
-    public NFDParser() {
-        this("http://localhost:6400");
-    }
-    
-    /**
-     * 解析分享链接
-     */
-    public Map<String, Object> parseLink(String shareUrl, String password) throws Exception {
-        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/json/parser?url=" + shareUrl);
-        if (password != null && !password.isEmpty()) {
-            urlBuilder.append("&pwd=").append(password);
-        }
-        
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(urlBuilder.toString()))
-                .GET()
-                .build();
-        
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("HTTP请求失败: " + response.statusCode());
-        }
-        
-        Map<String, Object> result = objectMapper.readValue(response.body(), Map.class);
-        Boolean success = (Boolean) result.get("success");
-        
-        if (success) {
-            return (Map<String, Object>) result.get("data");
-        } else {
-            throw new RuntimeException((String) result.get("msg"));
-        }
-    }
-    
-    /**
-     * 获取直链URL
-     */
-    public String getDirectUrl(String shareUrl, String password) {
-        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/parser?url=" + shareUrl);
-        if (password != null && !password.isEmpty()) {
-            urlBuilder.append("&pwd=").append(password);
-        }
-        return urlBuilder.toString();
-    }
-    
-    // 使用示例
-    public static void main(String[] args) {
-        try {
-            NFDParser parser = new NFDParser("http://localhost:6400");
-            
-            Map<String, Object> result = parser.parseLink("https://lanzoux.com/ia2cntg", "");
-            System.out.println("直链: " + result.get("directLink"));
-            System.out.println("缓存命中: " + result.get("cacheHit"));
-            System.out.println("过期时间: " + result.get("expires"));
-            
-        } catch (Exception e) {
-            System.err.println("错误: " + e.getMessage());
-        }
-    }
-}
-```
+:::
 
 ## 前端集成示例
 
