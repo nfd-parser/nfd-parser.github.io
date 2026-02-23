@@ -163,5 +163,5 @@ proxy:
 <ConfigManager />
 
 <script setup>
-import ConfigManager from '../.vitepress/components/ConfigManager.vue'
+import ConfigManager from './.vitepress/components/ConfigManager.vue'
 </script>

@@ -973,5 +973,5 @@ parser.parseWithRetry('https://lanzoux.com/ia2cntg')
 这些示例展示了如何在不同编程语言和场景中使用 NFD Parser API。您可以根据具体需求选择合适的示例进行修改和使用。
 
 <script setup>
-import DemoParser from '../.vitepress/components/DemoParser.vue'
+import DemoParser from './.vitepress/components/DemoParser.vue'
 </script>

@@ -117,5 +117,5 @@ curl "https://lz0.qaiu.top/v2/linkInfo?url=https://www.ilanzou.com/s/Wch0DGj8"
 - 阅读 [部署指南](/deployment) 自行搭建服务
 
 <script setup>
-import DemoParser from '../../.vitepress/components/DemoParser.vue'
+import DemoParser from '../.vitepress/components/DemoParser.vue'
 </script>
