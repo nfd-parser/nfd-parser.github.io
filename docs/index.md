@@ -20,16 +20,32 @@ hero:
       link: https://github.com/qaiu/netdisk-fast-download
 
 features:
-  - icon: 🚀
+  - icon:
+      src: /icons/icon-performance.svg
+      alt: 高性能
+      width: 48
+      height: 48
     title: 高性能解析
     details: 基于 Vert.x 4 构建，Jdk17+注解式路由API，支持高并发请求处理
-  - icon: 🔗
+  - icon:
+      src: /icons/icon-cloud.svg
+      alt: 多网盘
+      width: 48
+      height: 48
     title: 多网盘支持
     details: 已支持蓝奏云、夸克网盘、UC网盘、123云盘、小飞机盘、移动云、天翼云等多款网盘
-  - icon: ⚙️
+  - icon:
+      src: /icons/icon-config.svg
+      alt: 配置
+      width: 48
+      height: 48
     title: 灵活配置
     details: 支持缓存配置、限流控制、代理设置、认证参数加密等多项配置
-  - icon: 🔒
+  - icon:
+      src: /icons/icon-security.svg
+      alt: 安全
+      width: 48
+      height: 48
     title: 加密分享与认证
     details: 支持加密分享链接、文件夹分享解析、Cookie/Token 认证解析大文件
 ---
