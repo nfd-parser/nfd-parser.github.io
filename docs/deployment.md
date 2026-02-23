@@ -4,32 +4,40 @@
 
 ## 环境要求
 
-- **Java**: JDK 17 或更高版本 (提供 JDK 11 分支)
+- **Java**: JDK 17 或更高版本 (提供 JDK 11 分支 main-jdk11)
 - **Maven**: 用于构建项目
 - **内存**: 至少 512MB RAM
 - **存储**: 至少 1GB 可用磁盘空间
+
+## 服务端口
+
+- **6400**: API 服务端口（建议使用 Nginx 代理）
+- **6401**: 内置 Web 解析工具（个人使用可直接开放此端口）
 
 ## JDK 下载
 
 推荐使用阿里 Dragonwell JDK 17:
 
-- [Windows x86](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
-- [Linux x86](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
-- [Linux aarch64](https://github.com/alibaba/dragonwell17/releases) - 从官方 GitHub 获取
+- [Dragonwell17-windows-x86](https://github.com/alibaba/dragonwell17/releases)
+- [Dragonwell17-linux-x86](https://github.com/alibaba/dragonwell17/releases)
+- [Dragonwell17-linux-aarch64](https://github.com/alibaba/dragonwell17/releases)
 
-## 构建项目
+## 开发和打包
 
 ```bash
-# 克隆项目
+# 环境要求: JDK 17 + Maven
 git clone https://github.com/qaiu/netdisk-fast-download.git
 cd netdisk-fast-download
 
-# 环境要求: JDK 17 + Maven
 mvn clean
-mvn package
+mvn package -DskipTests
 ```
 
-构建完成后，打包文件位于 `web-service/target/netdisk-fast-download-bin.zip`
+打包好的文件位于 `web-service/target/netdisk-fast-download-bin.zip`
+
+## 快速部署
+
+[通过雨云一键部署](https://www.rainyun.com/)
 
 ## Docker 部署
 
@@ -43,7 +51,7 @@ cd netdisk-fast-download
 # 拉取镜像
 docker pull ghcr.io/qaiu/netdisk-fast-download:latest
 
-# 复制配置文件
+# 复制配置文件（或下载仓库 web-service/src/main/resources）
 docker create --name netdisk-fast-download ghcr.io/qaiu/netdisk-fast-download:latest
 docker cp netdisk-fast-download:/app/resources ./resources
 docker rm netdisk-fast-download
@@ -57,6 +65,13 @@ docker run -d -it --name netdisk-fast-download \
   -v ./db:/app/db \
   -v ./logs:/app/logs \
   ghcr.io/qaiu/netdisk-fast-download:latest
+
+# 反代6401端口
+
+# 升级容器
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower --cleanup --run-once netdisk-fast-download
 ```
 
 ### 国内服务器部署
@@ -69,7 +84,7 @@ cd netdisk-fast-download
 # 拉取镜像（使用国内镜像源）
 docker pull ghcr.nju.edu.cn/qaiu/netdisk-fast-download:latest
 
-# 复制配置文件
+# 复制配置文件（或下载仓库 web-service/src/main/resources）
 docker create --name netdisk-fast-download ghcr.nju.edu.cn/qaiu/netdisk-fast-download:latest
 docker cp netdisk-fast-download:/app/resources ./resources
 docker rm netdisk-fast-download
@@ -83,6 +98,13 @@ docker run -d -it --name netdisk-fast-download \
   -v ./db:/app/db \
   -v ./logs:/app/logs \
   ghcr.nju.edu.cn/qaiu/netdisk-fast-download:latest
+
+# 反代6401端口
+
+# 升级容器
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower --cleanup --run-once netdisk-fast-download
 ```
 
 ### Docker 容器管理
@@ -102,10 +124,6 @@ docker start netdisk-fast-download
 
 # 重启容器
 docker restart netdisk-fast-download
-
-# 升级容器
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower --cleanup --run-once netdisk-fast-download
 ```
 
 ## Linux 系统服务部署
@@ -115,32 +133,15 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 ```bash
 cd ~
 wget -O netdisk-fast-download.zip \
-  https://github.com/qaiu/netdisk-fast-download/releases/download/0.1.8-release-fixed2/netdisk-fast-download-bin-fixed2.zip
+  https://github.com/qaiu/netdisk-fast-download/releases/download/v0.1.9b7/netdisk-fast-download-bin.zip
 unzip netdisk-fast-download-bin.zip
 cd netdisk-fast-download
 bash service-install.sh
 ```
 
-### 手动部署
-
-1. **下载并解压**:
-```bash
-wget -O netdisk-fast-download.zip [下载链接]
-unzip netdisk-fast-download-bin.zip
-cd netdisk-fast-download
-```
-
-2. **配置系统服务**:
-```bash
-# 编辑服务文件，修改ExecStart路径为实际路径
-sudo nano /etc/systemd/system/netdisk-fast-download.service
-
-# 重新加载systemd
-sudo systemctl daemon-reload
-
-# 启用服务
-sudo systemctl enable netdisk-fast-download.service
-```
+::: warning 注意
+netdisk-fast-download.service 中的 ExecStart 的路径需改为实际路径
+:::
 
 ### 服务管理命令
 
@@ -160,7 +161,7 @@ systemctl stop netdisk-fast-download.service
 # 开机自启
 systemctl enable netdisk-fast-download.service
 
-# 禁用开机自启
+# 停止开机自启
 systemctl disable netdisk-fast-download.service
 ```
 
@@ -168,17 +169,29 @@ systemctl disable netdisk-fast-download.service
 
 ### 系统服务部署
 
-1. **下载解压**: 下载并解压 `netdisk-fast-download-bin.zip`
-2. **进入目录**: 进入 `netdisk-fast-download/bin` 目录
-3. **安装服务**: 使用管理员权限运行 `nfd-service-install.bat`
+1. 下载并解压 releases 版本 `netdisk-fast-download-bin.zip`
+2. 进入 `netdisk-fast-download` 下的 `bin` 目录
+3. 使用管理员权限运行 `nfd-service-install.bat`
 
 ### 直接运行
 
 如果不想使用系统服务，可以直接运行 `run.bat`
 
-### 注意事项
-
+::: warning 注意
 如果 JDK 环境变量的 Java 版本不是 17，请修改 `nfd-service-template.xml` 中的 Java 命令路径为实际路径。
+:::
+
+## 宝塔面板部署
+
+详细的宝塔部署教程请参考: [宝塔部署教程](https://blog.qaiu.top/archives/netdisk-fast-download-bao-ta-an-zhuang-jiao-cheng)
+
+### 基本步骤
+
+1. 安装 Java 环境
+2. 上传项目文件到服务器
+3. 在宝塔面板中配置端口访问
+4. 创建守护进程
+5. 配置反向代理
 
 ## 配置文件说明
 
@@ -186,7 +199,7 @@ systemctl disable netdisk-fast-download.service
 ```
 resources/
 ├── app-dev.yml          # 服务配置
-├── server-proxy.yml     # 代理配置
+├── server-proxy.yml     # 代理服务配置
 └── ...                  # 其他配置文件
 ```
 
@@ -203,7 +216,7 @@ resources/
 代理服务配置，包括：
 - 前端反向代理端口
 - 路径配置
-- 其他代理相关设置
+- SSL 配置
 
 ### IP 代理配置
 
@@ -221,6 +234,27 @@ proxy:
     password:                 # 密码
 ```
 
+nfd-proxy 搭建 http 代理服务器参考: [nfd-proxy](https://github.com/nfd-parser/nfd-proxy)
+
+### 认证信息配置
+
+部分网盘（如123）解析大文件时需要登录认证，可以在配置文件中添加认证信息。
+
+修改 `app-dev.yml`:
+
+```yaml
+### 解析认证相关
+auths:
+  # 123：配置用户名密码
+  ye:
+    username: 你的用户名
+    password: 你的密码
+```
+
+::: info 注意
+目前仅支持 123（ye）的认证配置。夸克/UC 等网盘的认证通过 `auth` 参数传递，参考 [认证参数文档](/api#认证参数-v0-2-1)。
+:::
+
 ## Nginx 反向代理
 
 ### 基本配置
@@ -229,7 +263,7 @@ proxy:
 server {
     listen 80;
     server_name your_domain.com;
-    
+
     location / {
         proxy_pass http://127.0.0.1:6400;
         proxy_set_header Host $host;
@@ -246,10 +280,10 @@ server {
 server {
     listen 443 ssl http2;
     server_name your_domain.com;
-    
+
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/cert.key;
-    
+
     location / {
         proxy_pass http://127.0.0.1:6400;
         proxy_set_header Host $host;
@@ -259,18 +293,6 @@ server {
     }
 }
 ```
-
-## 宝塔面板部署
-
-详细的宝塔部署教程请参考: [宝塔部署教程](https://blog.qaiu.top/archives/netdisk-fast-download-bao-ta-an-zhuang-jiao-cheng)
-
-### 基本步骤
-
-1. **环境准备**: 安装 Java 环境
-2. **文件上传**: 上传项目文件到服务器
-3. **配置端口**: 在宝塔面板中配置端口访问
-4. **启动服务**: 创建守护进程
-5. **域名绑定**: 配置反向代理
 
 ## 性能优化
 
@@ -284,101 +306,47 @@ java -Xms512m -Xmx1024m -jar app.jar
 java -Xms1024m -Xmx2048m -jar app.jar
 ```
 
-### 缓存优化
-
-在配置文件中调整缓存相关参数：
-- 缓存时长
-- 缓存大小
-- 清理策略
-
-### 数据库优化
-
-- 定期清理过期数据
-- 优化查询索引
-- 配置连接池
-
 ## 监控和日志
 
-### 日志配置
+### 日志文件
 
-日志文件通常位于 `logs/` 目录下：
-- `app.log`: 应用日志
-- `error.log`: 错误日志
-- `access.log`: 访问日志
+日志文件通常位于 `logs/` 目录下。
 
 ### 健康检查
 
 ```bash
 # 检查服务状态
 curl http://localhost:6400/v2/statisticsInfo
-
-# 检查进程
-ps aux | grep netdisk-fast-download
 ```
 
 ## 故障排除
 
-### 常见问题
+### 端口被占用
 
-1. **端口被占用**:
 ```bash
 # 查看端口占用
 netstat -tulpn | grep 6400
-
-# 杀死占用进程
-kill -9 [PID]
 ```
 
-2. **内存不足**:
+### 内存不足
+
+调整 JVM 参数或减少缓存配置。
+
+### 权限问题
+
 ```bash
-# 查看内存使用
-free -h
-
-# 调整 JVM 参数
-```
-
-3. **权限问题**:
-```bash
-# 检查文件权限
-ls -la
-
-# 修改权限
 chmod +x run.sh
 ```
 
-### 日志分析
-
-```bash
-# 查看实时日志
-tail -f logs/app.log
-
-# 查看错误日志
-grep -i error logs/app.log
-
-# 查看最近的日志
-tail -n 100 logs/app.log
-```
-
-## 安全注意事项
-
-1. **防火墙配置**: 只开放必要的端口
-2. **访问限制**: 配置 IP 白名单或限流
-3. **定期更新**: 及时更新到最新版本
-4. **备份数据**: 定期备份配置和数据
-5. **监控异常**: 设置异常监控和告警
-
-## 扩展和定制
-
-### 专属版功能
+## 专属版
 
 专属版提供以下额外功能：
 - 小飞机、蓝奏优享大文件解析支持
 - 天翼云盘、移动云盘、联通云盘解析支持
 - 功能定制开发
-- 部署服务和首页定制
+- 托管服务：包含部署服务和云服务器环境
 
 ### 联系方式
 
 - QQ: 197575894
 - 微信: imcoding_
-- 价格: 99元起

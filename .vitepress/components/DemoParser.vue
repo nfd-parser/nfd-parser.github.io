@@ -79,10 +79,22 @@
           </div>
         </div>
 
+        <div v-if="result.shareLinkInfo?.shareUrl" class="result-item">
+          <label>原始链接：</label>
+          <div class="link-item">
+            <a :href="result.shareLinkInfo.shareUrl" target="_blank" rel="noopener noreferrer" class="result-link">
+              {{ result.shareLinkInfo.shareUrl }}
+            </a>
+            <button @click="copyToClipboard(result.shareLinkInfo.shareUrl)" class="copy-btn">
+              📋 复制
+            </button>
+          </div>
+        </div>
+
         <div v-if="result.downLink" class="result-item">
           <label>下载链接：</label>
           <div class="link-item">
-            <a :href="result.downLink" target="_blank" class="result-link">
+            <a :href="result.downLink" target="_blank" rel="noopener noreferrer" class="result-link">
               {{ result.downLink }}
             </a>
             <button @click="copyToClipboard(result.downLink)" class="copy-btn">
@@ -94,7 +106,7 @@
         <div v-if="result.apiLink" class="result-item">
           <label>API 链接：</label>
           <div class="link-item">
-            <a :href="result.apiLink" target="_blank" class="result-link">
+            <a :href="result.apiLink" target="_blank" rel="noopener noreferrer" class="result-link">
               {{ result.apiLink }}
             </a>
             <button @click="copyToClipboard(result.apiLink)" class="copy-btn">
@@ -130,7 +142,7 @@
         <div v-if="previewResult.data" class="preview-item">
           <label>预览链接：</label>
           <div class="link-item">
-            <a :href="previewResult.data" target="_blank" class="result-link">
+            <a :href="previewResult.data" target="_blank" rel="noopener noreferrer" class="result-link">
               {{ previewResult.data }}
             </a>
             <button @click="copyToClipboard(previewResult.data)" class="copy-btn">
@@ -178,8 +190,7 @@ const parseLink = async () => {
       pwd: password.value || ''
     })
     
-    // 使用 lzzz.qaiu.top API
-    const apiUrl = `https://lzzz.qaiu.top/v2/linkInfo?${params}`
+    const apiUrl = `https://lz0.qaiu.top/v2/linkInfo?${params}`
     const response = await fetch(apiUrl)
     const mockResponse = await response.json()
     
@@ -213,8 +224,7 @@ const previewLink = async () => {
       pwd: password.value || ''
     })
     
-    // 使用 lzzz.qaiu.top 预览 API
-    const previewUrl = `https://lzzz.qaiu.top/v2/preview?${params}`
+    const previewUrl = `https://lz0.qaiu.top/v2/preview?${params}`
     
     // 设置预览结果
     previewResult.value = {
